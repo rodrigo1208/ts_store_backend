@@ -4,11 +4,12 @@ import br.com.rodrigocardoso.ts_store.service.Service
 import br.com.rodrigocardoso.ts_store.util.Context
 import br.com.rodrigocardoso.ts_store.util.fromJson
 import br.com.rodrigocardoso.ts_store.util.toJson
+import org.jooq.DAO
 import org.jooq.TableRecord
 import spark.kotlin.*
 import java.util.*
 
-abstract class Resource <R : TableRecord<R>, P,  T : Service<R, P>> (protected val service: T, private val uri: String, protected val type: Class<P>) {
+abstract class Resource <R : TableRecord<R>, P,  D: DAO<R, P, UUID>, T : Service<R, P, D>> (protected val service: T, private val uri: String, protected val type: Class<P>) {
 
     protected val jsonType = "application/json"
 

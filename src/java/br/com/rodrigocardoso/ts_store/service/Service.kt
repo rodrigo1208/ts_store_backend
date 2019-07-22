@@ -1,6 +1,6 @@
 package br.com.rodrigocardoso.ts_store.service
 
-import br.com.rodrigocardoso.ts_store.ResponseStatus
+import br.com.rodrigocardoso.ts_store.resources.ResponseStatus
 import br.com.rodrigocardoso.ts_store.exceptions.ServiceException
 import br.com.rodrigocardoso.ts_store.filters.Filter
 import org.jooq.Condition
@@ -10,9 +10,9 @@ import java.sql.Timestamp
 import java.time.LocalDateTime
 import java.util.*
 
-abstract class Service <R : TableRecord<R>, P> (protected var dao: DAO<R, P, UUID>, var type: Class<P>) {
+abstract class Service <R : TableRecord<R>, P, D : DAO<R, P, UUID>> (protected open val dao: D, val type: Class<P>) {
 
-    fun create(entity: P): P {
+    open fun create(entity: P): P {
         onCreate(entity);
         dao.insert(entity)
         return entity
@@ -34,14 +34,13 @@ abstract class Service <R : TableRecord<R>, P> (protected var dao: DAO<R, P, UUI
     }
 
     fun find(filter: Map<String, String>): List<P>? {
-        val fetch = dao.configuration()
+        return dao.configuration()
                 .dsl()
                 .select()
                 .from(dao.table)
                 .where(getFilters(filter))
                 .fetch()
-        val map = fetch.map { r -> r.into(type) }
-        return map
+                .map { r -> r.into(type) }
     }
 
     protected fun now (): Timestamp { return Timestamp.valueOf(LocalDateTime.now()) }

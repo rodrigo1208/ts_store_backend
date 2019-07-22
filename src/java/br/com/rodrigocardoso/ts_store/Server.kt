@@ -1,7 +1,10 @@
 package br.com.rodrigocardoso.ts_store
 
+import br.com.rodrigocardoso.ts_store.auth.AuthResource
 import br.com.rodrigocardoso.ts_store.exceptions.ServiceException
-import br.com.rodrigocardoso.ts_store.resources.CategoriaResource
+import br.com.rodrigocardoso.ts_store.categoria.CategoriaResource
+import br.com.rodrigocardoso.ts_store.resources.ResponseStatus
+import br.com.rodrigocardoso.ts_store.usuario.UsuarioResource
 import br.com.rodrigocardoso.ts_store.util.toJson
 import spark.Spark.exception
 import spark.kotlin.before
@@ -12,6 +15,8 @@ class Server {
     fun initialize() {
         configureHeaders()
         configureExceptions()
+        AuthResource()
+        UsuarioResource()
         CategoriaResource()
     }
 
