@@ -24,21 +24,21 @@ abstract class Resource <R : TableRecord<R>, P,  D: DAO<R, P, UUID>, T : Service
     protected fun create(handler: RouteHandler): Any {
         return with(handler) {
             val entity = fromJson(request.body(), type)
-            toJson(service.create(entity))
+            toJson(service.create(entity, request.attribute("context") ?: Context(request, UUID.randomUUID()) ))
         }
     }
 
     protected fun update(handler: RouteHandler): Any {
         return with(handler) {
             val entity = fromJson(request.body(), type)
-            toJson(service.update(entity))
+            toJson(service.update(entity, request.attribute("context")))
         }
     }
 
     protected fun remove(handler: RouteHandler): Any {
         return with(handler) {
             val id = UUID.fromString(request.params("id"))
-            service.remove(id)
+            service.remove(id, request.attribute("context"))
             ""
         }
     }
@@ -52,8 +52,10 @@ abstract class Resource <R : TableRecord<R>, P,  D: DAO<R, P, UUID>, T : Service
 
     protected fun find(handler: RouteHandler): Any {
         return with(handler) {
-            val context = Context(request, UUID.randomUUID())
-            toJson(service.find(context.params))
+            val context: Context = request.attribute("context")
+            val offset = context.params["offset"].takeIf { a -> !a.isNullOrEmpty() }.let { a -> (a ?: "0").toInt()  }
+            val size = context.params["size"].takeIf { a -> !a.isNullOrEmpty() }.let { a -> (a ?: "10").toInt()  }
+            toJson(service.find(context.params, offset, size))
         }
     }
 }

@@ -20,7 +20,7 @@ object Jwt {
                 .sign(algorithm)
     }
 
-    fun verify(token: String): String {
+    fun verify(token: String): String? {
         val algorithm = Algorithm.HMAC512(secret)
         val verifier = JWT.require(algorithm).withIssuer(issuer).build()
         return verifier.verify(token).subject

@@ -9,5 +9,4 @@ class UsuarioResource : Resource<UsuarioRecord, Usuario, UsuarioDao, UsuarioServ
         service = UsuarioService(),
         uri = "/usuario",
         type = Usuario::class.java
-) {
-}
+)

@@ -7,15 +7,16 @@ import br.com.rodrigocardoso.ts_store.resources.ResponseStatus
 import br.com.rodrigocardoso.ts_store.exceptions.ServiceException
 import br.com.rodrigocardoso.ts_store.service.Service
 import br.com.rodrigocardoso.ts_store.util.Connection
+import br.com.rodrigocardoso.ts_store.util.Context
 import br.com.rodrigocardoso.ts_store.util.Password
 import java.util.*
 
 class UsuarioService : Service<UsuarioRecord, Usuario, UsuarioDao>(UsuarioDao(Connection.configuration), Usuario::class.java) {
-    override fun create(entity: Usuario): Usuario {
+    override fun create(entity: Usuario, context: Context): Usuario {
         dao.existsEmail(entity.email).takeIf { b -> !b } ?: throw ServiceException(ResponseStatus.CONFLICT, "User already exists")
 
         val password = Password(entity.senha.toCharArray())
-        onCreate(entity)
+        onCreate(entity, context)
         entity.senha = password.generatedPassword.byteToString()
         entity.salt = password.salt.byteToString()
 
@@ -27,7 +28,7 @@ class UsuarioService : Service<UsuarioRecord, Usuario, UsuarioDao>(UsuarioDao(Co
         }
     }
 
-    override fun onCreate(entity: Usuario) {
+    override fun onCreate(entity: Usuario, context: Context) {
         with(entity) {
             id = UUID.randomUUID()
             createdDate = now()
@@ -35,15 +36,15 @@ class UsuarioService : Service<UsuarioRecord, Usuario, UsuarioDao>(UsuarioDao(Co
         }
     }
 
-    override fun onUpdate(entity: Usuario) {
+    override fun onUpdate(entity: Usuario, context: Context) {
         with(entity) {
             updatedDate = now()
-            updatedUser = UUID.randomUUID()
+            updatedUser = id
         }
     }
 
-    override fun inactive(entity: Usuario) {
-        onUpdate(entity)
+    override fun inactive(entity: Usuario, context: Context) {
+        onUpdate(entity, context)
         entity.active = false
     }
 

@@ -8,5 +8,5 @@ import br.com.rodrigocardoso.ts_store.resources.Resource
 class CategoriaResource : Resource<CategoriaRecord, Categoria, CategoriaDao, CategoriaService>(
         service = CategoriaService(),
         type = Categoria::class.java,
-        uri = "/categoria"
+        uri = "/api/categoria"
 )
