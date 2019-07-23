@@ -5,21 +5,11 @@ import java.util.*
 import javax.crypto.SecretKeyFactory
 import javax.crypto.spec.PBEKeySpec
 
-class Password (password: CharArray) {
-    private var password: CharArray
-    val salt: ByteArray
+class Password (password: CharArray, val salt: ByteArray = getNextSalt()) {
     val generatedPassword: ByteArray
 
     init {
-        this.salt = this.getNextSalt()
-        this.password = password
-        this.generatedPassword = hash(password, salt)
-    }
-
-    private fun getNextSalt(): ByteArray {
-        val salt = ByteArray(16)
-        random.nextBytes(salt)
-        return salt
+        this.generatedPassword = hash(password, this.salt)
     }
 
     companion object Validate {
@@ -49,6 +39,12 @@ class Password (password: CharArray) {
             } finally {
                 spec.clearPassword()
             }
+        }
+
+        private fun getNextSalt(): ByteArray {
+            val salt = ByteArray(16)
+            random.nextBytes(salt)
+            return salt
         }
     }
 }
